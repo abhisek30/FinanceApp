@@ -1,74 +1,148 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from 'react';
+import { View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import {seedData} from '@/config/seedData';
+import {Link} from "expo-router";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const HomeScreen = ({ navigation }: any) => {
+    const renderTransactionItem = ({ item }: any) => (
+        <View style={styles.transaction}>
+            <Text style={styles.transactionDescription}>{item.description}</Text>
+            <Text style={styles.transactionAmount}>{item.amount > 0 ? `+${item.amount}` : item.amount}</Text>
+        </View>
+    );
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
-}
+    return (
+        <View style={styles.container}>
+            <View style={styles.accountInfo}>
+                <Text style={styles.welcomeText}>Welcome back,</Text>
+                <Text style={styles.userName}>{seedData.user.name}</Text>
+                <View style={styles.accountDetails}>
+                    <View style={styles.accountCard}>
+                        <Text style={styles.cardCurrency}>{seedData.user.currency}</Text>
+                        <Text style={styles.cardBalance}>${seedData.user.balance.toFixed(2)}</Text>
+                        <Text style={styles.cardAccount}>Account Number: **** {seedData.user.accountNumber.slice(-4)}</Text>
+                    </View>
+                    <View style={styles.cardActions}>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={styles.buttonText}>Request</Text>
+                        </TouchableOpacity>
+                        <Link href="../" style={styles.button}>
+                            <Text style={styles.buttonText}>Transfer</Text>
+                        </Link>
+                    </View>
+                </View>
+            </View>
+
+
+            <View style={styles.transactionHistory}>
+                <Text style={styles.transactionHeader}>Transactions</Text>
+                <FlatList
+                    data={seedData.transactions}
+                    renderItem={renderTransactionItem}
+                    keyExtractor={(item) => item.id.toString()}
+                    style={styles.transactionList}
+                />
+                <TouchableOpacity style={styles.viewAllButton}>
+                    <Text style={styles.viewAllText}>View All</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#FFF',
+    },
+    accountInfo: {
+        marginBottom: 30,
+    },
+    welcomeText: {
+        fontSize: 16,
+        color: '#171717',
+    },
+    userName: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#171717',
+        marginVertical: 5,
+    },
+    accountDetails: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 15,
+    },
+    accountCard: {
+        width: '65%',
+        backgroundColor: '#87DCFB',
+        padding: 15,
+        borderRadius: 10,
+    },
+    cardCurrency: {
+        fontSize: 14,
+        color: '#FFF',
+    },
+    cardBalance: {
+        fontSize: 22,
+        color: '#FFF',
+        fontWeight: 'bold',
+        marginVertical: 5,
+    },
+    cardAccount: {
+        fontSize: 12,
+        color: '#FFF',
+    },
+    cardActions: {
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    button: {
+        backgroundColor: '#171717',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        marginVertical: 5,
+    },
+    buttonText: {
+        color: '#FFF',
+        fontWeight: 'bold',
+    },
+    transactionHistory: {
+        marginBottom: 40,
+    },
+    transactionHeader: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    transaction: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F0F0F0',
+    },
+    transactionDescription: {
+        fontSize: 16,
+        color: '#171717',
+    },
+    transactionAmount: {
+        fontSize: 16,
+        color: '#171717',
+    },
+    viewAllButton: {
+        alignItems: 'flex-end',
+        marginTop: 10,
+    },
+    viewAllText: {
+        fontSize: 14,
+        color: '#87DCFB',
+    },
+    transactionList: {
+        marginBottom: 20,
+    },
 });
+
+export default HomeScreen;
