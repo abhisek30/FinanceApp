@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, Button, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import {seedData} from '../config/seedData';
+import {seedData} from '@/config/seedData';
 import {Link} from "expo-router";
 
 const OnboardingScreen = ({navigation}: any) => {
