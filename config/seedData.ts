@@ -62,6 +62,25 @@ export interface User {
     avatar: any;
 }
 
+export interface DailyTransaction {
+    day: string;
+    shortDay: string;
+    earnings: number;
+    withdrawals: number;
+}
+
+export interface MonthlyData {
+    month: string;
+    shortMonth: string;
+    isSelected?: boolean;
+}
+
+export interface CardStatistics {
+    id: string;
+    dailyTransactions: DailyTransaction[];
+    months: MonthlyData[];
+}
+
 // seedData.ts
 export const SEED_DATA = {
     user: {
@@ -243,4 +262,65 @@ export const SEED_DATA = {
             isActive: false,
         },
     ],
+
+    cardStatistics: {
+        "1": {
+            dailyTransactions: [
+                { day: "Sunday", shortDay: "Sun", earnings: 20.67, withdrawals: 15.40 },
+                { day: "Monday", shortDay: "Mon", earnings: 37.90, withdrawals: 22.30 },
+                { day: "Tuesday", shortDay: "Tue", earnings: 45.20, withdrawals: 18.90 },
+                { day: "Wednesday", shortDay: "Wed", earnings: 26.41, withdrawals: 30.15 },
+                { day: "Thursday", shortDay: "Thu", earnings: 57.89, withdrawals: 25.40 },
+                { day: "Friday", shortDay: "Fri", earnings: 89.12, withdrawals: 10.20 },
+                { day: "Saturday", shortDay: "Sat", earnings: 36.89, withdrawals: 5.40 }
+            ],
+            months: [
+                { month: "October", shortMonth: "Oct", isSelected: true },
+                { month: "November", shortMonth: "Nov" },
+                { month: "December", shortMonth: "Dec" },
+                { month: "January", shortMonth: "Jan" },
+                { month: "February", shortMonth: "Feb" },
+                { month: "March", shortMonth: "Mar" }
+            ]
+        },
+        "2": {
+            dailyTransactions: [
+                { day: "Sunday", shortDay: "Sun", earnings: 20.67, withdrawals: 15.40 },
+                { day: "Monday", shortDay: "Mon", earnings: 37.90, withdrawals: 22.30 },
+                { day: "Tuesday", shortDay: "Tue", earnings: 45.20, withdrawals: 18.90 },
+                { day: "Wednesday", shortDay: "Wed", earnings: 26.41, withdrawals: 30.15 },
+                { day: "Thursday", shortDay: "Thu", earnings: 57.89, withdrawals: 25.40 },
+                { day: "Friday", shortDay: "Fri", earnings: 89.12, withdrawals: 10.20 },
+                { day: "Saturday", shortDay: "Sat", earnings: 36.89, withdrawals: 5.40 }
+            ],
+            months: [
+                { month: "October", shortMonth: "Oct", isSelected: true },
+                { month: "November", shortMonth: "Nov" },
+                { month: "December", shortMonth: "Dec" },
+                { month: "January", shortMonth: "Jan" },
+                { month: "February", shortMonth: "Feb" },
+                { month: "March", shortMonth: "Mar" }
+            ]
+        },
+        "3": {
+            dailyTransactions: [
+                { day: "Sunday", shortDay: "Sun", earnings: 20.67, withdrawals: 15.40 },
+                { day: "Monday", shortDay: "Mon", earnings: 37.90, withdrawals: 22.30 },
+                { day: "Tuesday", shortDay: "Tue", earnings: 45.20, withdrawals: 18.90 },
+                { day: "Wednesday", shortDay: "Wed", earnings: 26.41, withdrawals: 30.15 },
+                { day: "Thursday", shortDay: "Thu", earnings: 57.89, withdrawals: 25.40 },
+                { day: "Friday", shortDay: "Fri", earnings: 89.12, withdrawals: 10.20 },
+                { day: "Saturday", shortDay: "Sat", earnings: 36.89, withdrawals: 5.40 }
+            ],
+            months: [
+                { month: "October", shortMonth: "Oct", isSelected: true },
+                { month: "November", shortMonth: "Nov" },
+                { month: "December", shortMonth: "Dec" },
+                { month: "January", shortMonth: "Jan" },
+                { month: "February", shortMonth: "Feb" },
+                { month: "March", shortMonth: "Mar" }
+            ]
+        },
+
+    }
 };

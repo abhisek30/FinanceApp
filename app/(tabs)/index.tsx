@@ -1,69 +1,68 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View, Text, ScrollView, Image, TouchableOpacity, SafeAreaView} from 'react-native';
 import {StatusBar} from 'expo-status-bar';
 import {Ionicons} from '@expo/vector-icons';
 import {SEED_DATA} from '@/config/seedData';
 import {Card, Transaction as TransactionType} from '../../config/seedData';
+import {router} from "expo-router";
 
-const BankCard: React.FC<Card> = ({
-                                      currency,
-                                      balance,
-                                      accountNumber,
-                                      validThru,
-                                      flagIcon,
-                                      cardTypeIcon,
-                                      style,
-                                  }) => {
+const BankCard: React.FC<Card & { onPress?: (card: Card) => void , navigation: any}> = (props) => {
+    const handlePress = () => {
+        router.navigate('stats', { card: props });
+    };
     return (
-        <View style={[styles.card, {backgroundColor: style.backgroundColor}]}>
-            <View style={styles.cardHeader}>
-                <View style={styles.currencyContainer}>
-                    <Image source={flagIcon} style={styles.flag}/>
-                    <Text style={[styles.currencyText, {color: style.textColor}]}>
-                        {currency}
-                    </Text>
-                </View>
-                {cardTypeIcon && <Image source={cardTypeIcon} style={styles.visaLogo}/>}
-            </View>
+        <TouchableOpacity onPress={handlePress}
+                          style={[styles.card, {backgroundColor: props.style.backgroundColor}]}>
 
-            <View style={styles.balanceContainer}>
-                <Text style={[styles.balanceLabel, {color: style.textColor}]}>
-                    Your balance
-                </Text>
-                <View style={styles.balanceRow}>
-                    <Text style={[styles.balance, {color: style.textColor}]}>
-                        {balance}
-                    </Text>
-                    <TouchableOpacity>
-                        <Ionicons
-                            name="eye-outline"
-                            size={24}
-                            color={style.textColor}
-                        />
-                    </TouchableOpacity>
+            <View >
+                <View style={styles.cardHeader}>
+                    <View style={styles.currencyContainer}>
+                        <Image source={props.flagIcon} style={styles.flag}/>
+                        <Text style={[styles.currencyText, {color: props.style.textColor}]}>
+                            {props.currency}
+                        </Text>
+                    </View>
+                    {props.cardTypeIcon && <Image source={props.cardTypeIcon} style={styles.visaLogo}/>}
                 </View>
-            </View>
 
-            <View style={styles.cardFooter}>
-                <View>
-                    <Text style={[styles.footerLabel, {color: style.textColor}]}>
-                        Account number
+                <View style={styles.balanceContainer}>
+                    <Text style={[styles.balanceLabel, {color: props.style.textColor}]}>
+                        Your balance
                     </Text>
-                    <Text style={[styles.footerValue, {color: style.textColor}]}>
-                        {accountNumber}
-                    </Text>
+                    <View style={styles.balanceRow}>
+                        <Text style={[styles.balance, {color: props.style.textColor}]}>
+                            {props.balance}
+                        </Text>
+                        <TouchableOpacity>
+                            <Ionicons
+                                name="eye-outline"
+                                size={24}
+                                color={props.style.textColor}
+                            />
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <View>
-                    <Text style={[styles.footerLabel, {color: style.textColor}]}>
-                        Valid Thru
-                    </Text>
-                    <Text style={[styles.footerValue, {color: style.textColor}]}>
-                        {validThru}
-                    </Text>
+
+                <View style={styles.cardFooter}>
+                    <View>
+                        <Text style={[styles.footerLabel, {color: props.style.textColor}]}>
+                            Account number
+                        </Text>
+                        <Text style={[styles.footerValue, {color: props.style.textColor}]}>
+                            {props.accountNumber}
+                        </Text>
+                    </View>
+                    <View>
+                        <Text style={[styles.footerLabel, {color: props.style.textColor}]}>
+                            Valid Thru
+                        </Text>
+                        <Text style={[styles.footerValue, {color: props.style.textColor}]}>
+                            {props.validThru}
+                        </Text>
+                    </View>
                 </View>
             </View>
-        </View>
-    );
+        </TouchableOpacity>);
 };
 
 const Transaction: React.FC<TransactionType> = ({type, name, amount, time, date}) => (
@@ -110,8 +109,8 @@ const TransactionsList: React.FC<{ transactions: TransactionType[] }> = ({transa
     );
 };
 
-export default function BankingApp() {
-    const {user, cards, transactions, actions, navigation} = SEED_DATA;
+export default function BankingApp({navigation}) {
+    const {user, cards, transactions, actions} = SEED_DATA;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -145,8 +144,8 @@ export default function BankingApp() {
                     style={styles.cardsContainer}
                 >
                     {cards.map((card) => (
-                        <BankCard key={card.id} {...card} />
-                    ))}
+                        <BankCard key={card.id} {...card} navigation={navigation} />
+                ))}
                 </ScrollView>
 
                 <View style={styles.actionsContainer}>
