@@ -237,6 +237,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 24,
+        marginTop: 20,
     },
     profile: {
         flexDirection: 'row',
@@ -350,7 +351,7 @@ const styles = StyleSheet.create({
     },
     transactionsList: {
         gap: 16,
-        marginBottom: 16,
+        marginBottom: 26,
     },
     dateHeader: {
         fontSize: 12,

@@ -53,8 +53,8 @@ export default function QRCodeScanner() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        alignContent: 'center',
         justifyContent: 'center',
-        padding : 30,
     },
     message: {
         textAlign: 'center',
@@ -62,13 +62,6 @@ const styles = StyleSheet.create({
     },
     camera: {
         flex: 1,
-    },
-    buttonContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        backgroundColor: 'transparent',
-        margin: 64,
-        padding: 20,
     },
     text: {
         fontSize: 24,
@@ -80,7 +73,8 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         padding: 20,
         alignItems: 'center',
-        marginTop: 'auto',
+        marginLeft: 20,
+        marginRight: 20,
     },
     buttonText: {
         color: '#ffffff',
