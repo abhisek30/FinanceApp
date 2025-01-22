@@ -1,20 +1,24 @@
-import React, {useState} from 'react';
-import {StyleSheet, View, Text, ScrollView, Image, TouchableOpacity, SafeAreaView} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {StyleSheet, View, Text, ScrollView, Image, TouchableOpacity, SafeAreaView, Button} from 'react-native';
 import {StatusBar} from 'expo-status-bar';
 import {Ionicons} from '@expo/vector-icons';
 import {SEED_DATA} from '@/config/seedData';
 import {Card, Transaction as TransactionType} from '../../config/seedData';
 import {router} from "expo-router";
+import {BottomSheetModal, BottomSheetModalProvider, BottomSheetView} from "@gorhom/bottom-sheet";
+import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {TransferBottomSheet} from "@/app/TransferBottomSheet";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BankCard: React.FC<Card & { onPress?: (card: Card) => void , navigation: any}> = (props) => {
+const BankCard: React.FC<Card & { onPress?: (card: Card) => void, navigation: any }> = (props) => {
     const handlePress = () => {
-        router.navigate('stats', { card: props });
+        router.navigate('stats', {card: props});
     };
     return (
         <TouchableOpacity onPress={handlePress}
                           style={[styles.card, {backgroundColor: props.style.backgroundColor}]}>
 
-            <View >
+            <View>
                 <View style={styles.cardHeader}>
                     <View style={styles.currencyContainer}>
                         <Image source={props.flagIcon} style={styles.flag}/>
@@ -110,78 +114,112 @@ const TransactionsList: React.FC<{ transactions: TransactionType[] }> = ({transa
 };
 
 export default function BankingApp({navigation}) {
-    const {user, cards, transactions, actions} = SEED_DATA;
+    const {user, cards,transactions, actions} = SEED_DATA;
+
+    const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+    const [transfers, setTransfers] = useState<TransactionType[]>([]);
+    const [copyTransactions, setTransactions] = useState<TransactionType[]>(transactions);
+
+    useEffect(() => {
+        loadTransfers();
+    }, []);
+
+    const loadTransfers = async () => {
+        try {
+            const savedTransfers = await AsyncStorage.getItem('transfers');
+            if (savedTransfers) {
+                const localTransactions = JSON.parse(savedTransfers)
+                if (Array.isArray(localTransactions)) {
+                    setTransactions((prevTransactions) => [...localTransactions, ...prevTransactions]);
+                    setTransfers((prevTransactions) => [...localTransactions, ...prevTransactions]);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading transfers:', error);
+        }
+    };
+
+    const handleTransferComplete = async (transfer: TransactionType) => {
+        const newTransfers = [transfer, ...transfers];
+        setTransfers(newTransfers);
+        try {
+            await AsyncStorage.setItem('transfers', JSON.stringify(newTransfers));
+            setTransactions((prevTransactions) => [transfer, ...prevTransactions]);
+        } catch (error) {
+            console.error('Error saving transfer:', error);
+        }
+    };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar style="auto"/>
-
-            <ScrollView
-                style={styles.mainScroll}
-                showsVerticalScrollIndicator={false}
-            >
-                <View style={styles.header}>
-                    <View style={styles.profile}>
-                        <Image
-                            source={user.avatar}
-                            style={styles.avatar}
-                        />
-                        <View>
-                            <Text style={styles.welcomeText}>Welcome back,</Text>
-                            <Text style={styles.userName}>{user.name}</Text>
-                        </View>
-                    </View>
-                    <TouchableOpacity>
-                        <Ionicons name="notifications-outline" size={24} color="black"/>
-                    </TouchableOpacity>
-                </View>
-
-                <Text style={styles.sectionTitle}>Account</Text>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <SafeAreaView style={styles.container}>
+                <StatusBar style="auto"/>
 
                 <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.cardsContainer}
+                    style={styles.mainScroll}
+                    showsVerticalScrollIndicator={false}
                 >
-                    {cards.map((card) => (
-                        <BankCard key={card.id} {...card} navigation={navigation} />
-                ))}
+                    <View style={styles.header}>
+                        <View style={styles.profile}>
+                            <Image
+                                source={user.avatar}
+                                style={styles.avatar}
+                            />
+                            <View>
+                                <Text style={styles.welcomeText}>Welcome back,</Text>
+                                <Text style={styles.userName}>{user.name}</Text>
+                            </View>
+                        </View>
+                        <TouchableOpacity>
+                            <Ionicons name="notifications-outline" size={24} color="black"/>
+                        </TouchableOpacity>
+                    </View>
+
+                    <Text style={styles.sectionTitle}>Account</Text>
+
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        style={styles.cardsContainer}
+                    >
+                        {cards.map((card) => (
+                            <BankCard key={card.id} {...card} navigation={navigation}/>
+                        ))}
+                    </ScrollView>
+
+                    <View style={styles.actionsContainer}>
+                        {actions.map((action) => (
+                            <TouchableOpacity key={action.id} style={styles.actionButton} onPress={() =>
+                                setIsBottomSheetVisible(true)
+                            }>
+                                <Ionicons name={action.icon as any} size={24} color="black"/>
+                                <Text style={styles.actionText}>{action.title}</Text>
+                            </TouchableOpacity>
+                        ))}
+                        <TouchableOpacity style={styles.actionButton}>
+                            <Ionicons name="add" size={24} color="white" style={styles.addButton}/>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.transactionsHeader}>
+                        <Text style={styles.sectionTitle}>Transaction</Text>
+                        <TouchableOpacity>
+                            <Text style={styles.viewAllText}>View all</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <TransactionsList transactions={copyTransactions}/>
                 </ScrollView>
 
-                <View style={styles.actionsContainer}>
-                    {actions.map((action) => (
-                        <TouchableOpacity key={action.id} style={styles.actionButton}>
-                            <Ionicons name={action.icon as any} size={24} color="black"/>
-                            <Text style={styles.actionText}>{action.title}</Text>
-                        </TouchableOpacity>
-                    ))}
-                    <TouchableOpacity style={styles.actionButton}>
-                        <Ionicons name="add" size={24} color="white" style={styles.addButton}/>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={styles.transactionsHeader}>
-                    <Text style={styles.sectionTitle}>Transaction</Text>
-                    <TouchableOpacity>
-                        <Text style={styles.viewAllText}>View all</Text>
-                    </TouchableOpacity>
-                </View>
-
-                <TransactionsList transactions={transactions}/>
-            </ScrollView>
-
-            {/*<View style={styles.bottomNav}>
-                {navigation.map((item) => (
-                    <TouchableOpacity key={item.id} style={styles.navItem}>
-                        <Ionicons
-                            name={item.icon as any}
-                            size={24}
-                            color={item.isActive ? 'black' : 'grey'}
-                        />
-                    </TouchableOpacity>
-                ))}
-            </View>*/}
-        </SafeAreaView>
+                <BottomSheetModalProvider>
+                    <TransferBottomSheet
+                        isVisible={isBottomSheetVisible}
+                        onClose={() => setIsBottomSheetVisible(false)}
+                        onTransferComplete={handleTransferComplete}
+                    />
+                </BottomSheetModalProvider>
+            </SafeAreaView>
+        </GestureHandlerRootView>
     );
 }
 
