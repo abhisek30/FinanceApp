@@ -4,13 +4,13 @@ import {StatusBar} from 'expo-status-bar';
 import {Ionicons} from '@expo/vector-icons';
 import {SEED_DATA} from '@/config/seedData';
 import {Card, Transaction as TransactionType} from '../../config/seedData';
-import {router} from "expo-router";
+import {router, useNavigation} from "expo-router";
 import {BottomSheetModal, BottomSheetModalProvider, BottomSheetView} from "@gorhom/bottom-sheet";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
 import {TransferBottomSheet} from "@/app/TransferBottomSheet";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BankCard: React.FC<Card & { onPress?: (card: Card) => void, navigation: any }> = (props) => {
+const BankCard: React.FC<Card> = (props) => {
     const handlePress = () => {
         router.navigate('stats', {card: props});
     };
@@ -113,7 +113,7 @@ const TransactionsList: React.FC<{ transactions: TransactionType[] }> = ({transa
     );
 };
 
-export default function BankingApp({navigation}) {
+export default function BankingApp({navigation} : any) {
     const {user, cards,transactions, actions} = SEED_DATA;
 
     const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
@@ -183,7 +183,7 @@ export default function BankingApp({navigation}) {
                         style={styles.cardsContainer}
                     >
                         {cards.map((card) => (
-                            <BankCard key={card.id} {...card} navigation={navigation}/>
+                            <BankCard key={card.id} {...card}/>
                         ))}
                     </ScrollView>
 

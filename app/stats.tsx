@@ -18,7 +18,6 @@ const StatisticsScreen: React.FC<StatisticsScreenProps> = ({
                                                                onBack
                                                            }) => {
 
-    console.log('Statistics data:', statistics);
     const chartConfig = {
         backgroundColor: '#ffffff',
         backgroundGradientFrom: '#ffffff',

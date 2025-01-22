@@ -9,10 +9,11 @@ import {Colors} from '@/constants/Colors';
 import {useColorScheme} from '@/hooks/useColorScheme';
 import {DarkTheme, DefaultTheme, ThemeProvider} from "@react-navigation/native";
 import {StatusBar} from "expo-status-bar";
+import StatisticsScreen from "@/app/stats";
 
 export default function TabLayout() {
     const colorScheme = useColorScheme();
-    /*<Tabs
+    return (<Tabs
         screenOptions={{
           tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
           headerShown: false,
@@ -40,13 +41,14 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
           }}
       />
-    </Tabs>*/
-    return (
+    </Tabs>);
+    /*return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <Stack>
                 <Stack.Screen name="index" options={{headerShown: false}}/>
+                <Stack.Screen name="stats" options={{ headerShown: false }} />
             </Stack>
             <StatusBar style="auto"/>
         </ThemeProvider>
-    );
+    );*/
 }
