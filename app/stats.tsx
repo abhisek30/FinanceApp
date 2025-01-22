@@ -144,6 +144,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 20,
         backgroundColor: '#fff',
+        marginTop: 24,
     },
     backButton: {
         marginRight: 16,
